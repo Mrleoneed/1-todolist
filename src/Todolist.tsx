@@ -2,7 +2,7 @@ import React from "react";
 
 type PropsType = {
     title: string
-    tasks: TaskType []
+    tasks: TaskType[]
 }
 
 type TaskType = {
