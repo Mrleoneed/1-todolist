@@ -40,6 +40,19 @@ export function Todolist(props: PropsType) {
         }
     }
 
+    const mappedTask = props.tasks.map((t) => {
+        const removeTaskHandler = () => {
+            props.removeTask(t.id)
+        }
+        return (
+            <li key={t.id}>
+                <input
+                    type="checkbox"
+                    checked={t.isDone}/>
+                <Button name={'x'} callBack={() => removeTaskHandler()}/>
+                <span>{t.title}</span>
+            </li>)
+    })
     return <div>
         <h3>{props.title}</h3>
         <div>
@@ -52,20 +65,7 @@ export function Todolist(props: PropsType) {
             <Button name={'+'} callBack={() => addTask()}/>
         </div>
         <ul>
-            {
-                props.tasks.map((t) => {
-                    const removeTaskHandler = () => {
-                        props.removeTask(t.id)
-                    }
-                    return (
-                        <li key={t.id}>
-                            <input
-                                type="checkbox"
-                                checked={t.isDone}/>
-                            <Button name={'x'} callBack={() => removeTaskHandler()}/>
-                            <span>{t.title}</span>
-                        </li>)
-                })}
+            {mappedTask }
         </ul>
         <div>
             <Button name={'All'} callBack={() => changeFilterHandler('all')}/>
