@@ -1,7 +1,8 @@
-import React, {useState} from 'react';
+import React, {ChangeEvent, KeyboardEvent, useState} from 'react';
+import {FilterValuesType} from './App';
 
 type TaskType = {
-    id: number
+    id: string
     title: string
     isDone: boolean
 }
@@ -9,67 +10,71 @@ type TaskType = {
 type PropsType = {
     title: string
     tasks: Array<TaskType>
-    removeTask: (taskId: number) => void
-    // taskFilter: (value: FilterType) => void
-
+    removeTask: (taskId: string) => void
+    changeFilter: (value: FilterValuesType) => void
+    addTask: (title: string) => void
 }
-
-export type FilterType = 'All' | 'Active' | 'Completed'
 
 
 export function Todolist(props: PropsType) {
+    let [title, setTitle] = useState('')
 
-    const [valueFilter, setValueFilter] = useState<FilterType>('All')
-
-    let taskFilter = (value: FilterType) => {
-        setValueFilter(value)
-    }
-    const durshlagFoo = () => {
-        let durshlag = props.tasks
-        //     if (valueFilter === 'Active') {
-        //         durshlag = props.tasks.filter(el => !el.isDone)
-        //     }
-        //     if (valueFilter === 'Completed') {
-        //         durshlag = props.tasks.filter(el => el.isDone)
-        //     }
-        //     return durshlag
-        // }
-        switch (valueFilter) {
-            case "Active": {
-                return durshlag = props.tasks.filter(el => !el.isDone)
-            }
-            case "Completed": {
-                return durshlag = props.tasks.filter(el => el.isDone)
-            }
-            default:
-                return durshlag
-
-        }
+    const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        setTitle(e.currentTarget.value)
     }
 
+    const addTask = () => {
+        props.addTask(title)
+        setTitle('')
+    }
+
+    const onAllClickHandler = () => {
+        props.changeFilter("all")
+    }
+
+
+    const onActiveClickHandler = () => {
+        props.changeFilter("active")
+    }
+
+    const onCompletedClickHandler = () => {
+        props.changeFilter("completed")
+    }
 
     return <div>
         <h3>{props.title}</h3>
         <div>
-            <input/>
-            <button>+</button>
+            <input
+                value={title}
+                onChange={onChangeHandler}
+                onKeyPress={(e: KeyboardEvent<HTMLInputElement>) => {
+                    if (e.key === 'Enter') {
+                        addTask()
+                    }
+                }}
+
+            />
+            <button onClick={addTask}>+</button>
         </div>
         <ul>
-            {durshlagFoo().map(t => {
-                return (
-                    <li>
-                        <button onClick={() => props.removeTask(t.id)}> &#10060;</button>
-                        <input type="checkbox" checked={t.isDone}/>
-                        <span>{t.title}</span>
-
-                    </li>
-                )
-            })}
+            {
+                props.tasks.map((t) => {
+                    const removeTaskHandler = () => {
+                        props.removeTask(t.id)
+                    }
+                    return (
+                        <li key={t.id}>
+                            <input type="checkbox" checked={t.isDone}/>
+                            <span>{t.title}</span>
+                            <button onClick={removeTaskHandler}>x
+                            </button>
+                        </li>)
+                })}
         </ul>
         <div>
-            <button onClick={() => taskFilter('All')}>All</button>
-            <button onClick={() => taskFilter('Active')}>Active</button>
-            <button onClick={() => taskFilter('Completed')}>Completed</button>
+            <button onClick={onAllClickHandler}>All</button>
+            <button onClick={onActiveClickHandler}>Active</button>
+            <button onClick={onCompletedClickHandler}>Completed</button>
         </div>
     </div>
 }
